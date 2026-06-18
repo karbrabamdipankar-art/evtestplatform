@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Everium Test Platform</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%225%22 fill=%22%230F172A%22/><path d=%22M13 2L3 14h9l-1 8 10-12h-9l1-8z%22 fill=%22%23D4AF37%22/></svg>">
+<style>
+/* ════════════════════════════════════════════════════════════
+   EVERIUM TEST PLATFORM — PREMIUM DESIGN SYSTEM v2.0
+   Navy · Royal Blue · Gold — Enterprise Assessment Edition
+════════════════════════════════════════════════════════════ */
+:root {
+  --navy:          #0F172A;
+  --royal:         #1E3A8A;
+  --royal-dark:    #172d6b;
+  --slate:         #334155;
+  --silver:        #CBD5E1;
+  --gold:          #D4AF37;
+  --gold-light:    #E8C84A;
+  --gold-dark:     #B8960F;
+  --emerald:       #10B981;
+  --emerald-dark:  #059669;
+  --white:         #FFFFFF;
+  --off-white:     #F8FAFC;
+  --border:        #E2E8F0;
+  --text-primary:  #0F172A;
+  --text-secondary:#334155;
+  --text-muted:    #64748B;
+  --danger:        #EF4444;
+  --warning:       #F59E0B;
+  --info:          #3B82F6;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     16px;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:     0 4px 16px rgba(0,0,0,.1);
+  --shadow-lg:     0 8px 32px rgba(0,0,0,.14);
+  --transition:    all .22s ease;
+  --sidebar-w:     260px;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:15px; scroll-behavior:smooth; }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--off-white); color:var(--text-primary); line-height:1.6; min-height:100vh; }
+
+/* ── LOADING ── */
+.loading-overlay { position:fixed; inset:0; background:rgba(15,23,42,.92); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; transition:opacity .3s; }
+.loading-overlay.hidden { opacity:0; pointer-events:none; }
+.spinner { width:44px; height:44px; border:3px solid rgba(212,175,55,.2); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text { color:var(--silver); font-size:.875rem; font-weight:500; }
+
+/* ── TOAST ── */
+#toast-container { position:fixed; bottom:1.5rem; right:1.5rem; z-index:10000; display:flex; flex-direction:column; gap:.5rem; pointer-events:none; }
+.toast { display:flex; align-items:center; gap:.65rem; padding:.7rem 1rem; border-radius:var(--radius-md); background:var(--navy); color:white; font-size:.82rem; font-weight:500; box-shadow:var(--shadow-lg); animation:toastIn .25s ease; pointer-events:auto; max-width:360px; border-left:3px solid var(--gold); }
+.toast.success { border-color:var(--emerald); }
+.toast.error   { border-color:var(--danger); }
+.toast.warning { border-color:var(--warning); }
+.toast.hiding  { animation:toastOut .25s ease forwards; }
+@keyframes toastIn  { from { transform:translateX(110%); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes toastOut { to   { transform:translateX(110%); opacity:0; } }
+
+/* ── PAGE SYSTEM ── */
+/* All pages are hidden. Body class controls which page is visible. */
+.page { display:none !important; }
+body.page-login            #login-page               { display:flex   !important; animation:pageFade .3s ease; }
+body.page-student-dash     #student-dashboard-page    { display:block  !important; animation:pageFade .3s ease; }
+body.page-course-select    #course-selection-page     { display:block  !important; animation:pageFade .3s ease; }
+body.page-test             #test-page                 { display:flex   !important; animation:pageFade .3s ease; }
+body.page-completion       #completion-page           { display:flex   !important; animation:pageFade .3s ease; }
+body.page-teacher-dash     #teacher-dashboard-page    { display:block  !important; animation:pageFade .3s ease; }
+body.page-admin-dash       #admin-dashboard-page      { display:block  !important; animation:pageFade .3s ease; }
+@keyframes pageFade  { from { opacity:0; } to { opacity:1; } }
+@keyframes pageSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+/* ── LAYOUT ── */
+.app-layout { display:flex; min-height:100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar { width:var(--sidebar-w); background:linear-gradient(180deg,var(--navy) 0%,#111827 100%); border-right:1px solid rgba(255,255,255,.06); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:200; transition:transform .3s ease; overflow-y:auto; overflow-x:hidden; }
+.sidebar-logo { display:flex; align-items:center; gap:.75rem; padding:1.5rem 1.25rem 1rem; border-bottom:1px solid rgba(255,255,255,.08); }
+.logo-mark { width:36px; height:36px; background:linear-gradient(135deg,var(--gold),var(--gold-dark)); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.logo-mark svg { width:22px; height:22px; }
+.logo-text h2 { font-size:.95rem; font-weight:800; color:white; }
+.logo-text span { font-size:.65rem; color:var(--gold); font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+.sidebar-user { padding:.9rem 1.25rem; border-bottom:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:.65rem; }
+.sidebar-user-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-dark)); display:flex; align-items:center; justify-content:center; color:var(--navy); font-weight:800; font-size:.85rem; flex-shrink:0; }
+.sidebar-user-name { font-size:.82rem; font-weight:600; color:white; line-height:1.2; }
+.sidebar-user-role { font-size:.68rem; color:var(--gold); font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+.sidebar-nav { flex:1; padding:.75rem 0; }
+.nav-label { font-size:.62rem; font-weight:700; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:.1em; padding:.5rem 1.25rem .25rem; margin-top:.4rem; }
+.nav-link { display:flex; align-items:center; gap:.6rem; padding:.6rem 1.25rem; cursor:pointer; color:rgba(255,255,255,.65); font-size:.82rem; font-weight:500; transition:var(--transition); border-left:3px solid transparent; text-decoration:none; border:none; background:none; width:100%; text-align:left; }
+.nav-link svg { width:17px; height:17px; flex-shrink:0; opacity:.7; }
+.nav-link:hover { background:rgba(255,255,255,.06); color:white; }
+.nav-link.active { background:rgba(212,175,55,.12); color:var(--gold); border-left-color:var(--gold); font-weight:600; }
+.nav-link.active svg { opacity:1; }
+.sidebar-footer { padding:.9rem 1.25rem 1.25rem; border-top:1px solid rgba(255,255,255,.06); }
+.sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:190; }
+.sidebar-overlay.open { display:block; }
+@media (max-width:768px) { .sidebar { transform:translateX(-100%); } .sidebar.open { transform:none; } }
+
+/* ── MAIN CONTENT ── */
+.main-content { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-height:100vh; }
+@media (max-width:768px) { .main-content { margin-left:0; } }
+
+/* ── TOPBAR ── */
+.topbar { background:white; border-bottom:1px solid var(--border); padding:.875rem 1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm); }
+.topbar-title { font-size:1rem; font-weight:700; color:var(--navy); }
+.topbar-right { display:flex; align-items:center; gap:.75rem; }
+.hamburger { display:none; background:none; border:1px solid var(--border); border-radius:var(--radius-sm); padding:.4rem; cursor:pointer; color:var(--text-secondary); }
+@media (max-width:768px) { .hamburger { display:flex; } }
+
+/* ── CONTENT AREA ── */
+.content-area { padding:1.75rem; flex:1; }
+@media (max-width:640px) { .content-area { padding:1rem; } }
+
+/* ── CARDS ── */
+.card { background:white; border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow:var(--shadow-sm); overflow:hidden; margin-bottom:1.25rem; animation:cardIn .3s ease; }
+@keyframes cardIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.card-header { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem; border-bottom:1px solid var(--border); gap:1rem; }
+.card-title { font-size:1rem; font-weight:700; color:var(--navy); }
+.card-body { padding:1.4rem; }
+.card-footer { padding:.9rem 1.4rem; border-top:1px solid var(--border); background:var(--off-white); }
+
+/* ── STATS ── */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:1rem; margin-bottom:1.25rem; }
+.stat-card { background:white; border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border); box-shadow:var(--shadow-sm); position:relative; overflow:hidden; transition:var(--transition); }
+.stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.stat-card.navy::before   { background:linear-gradient(90deg,var(--navy),var(--royal)); }
+.stat-card.royal::before  { background:linear-gradient(90deg,var(--royal),var(--info)); }
+.stat-card.gold::before   { background:linear-gradient(90deg,var(--gold),var(--gold-light)); }
+.stat-card.emerald::before{ background:linear-gradient(90deg,var(--emerald),#34d399); }
+.stat-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.stat-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:.75rem; }
+.stat-icon.navy    { background:rgba(15,23,42,.08); color:var(--navy); }
+.stat-icon.royal   { background:rgba(30,58,138,.08); color:var(--royal); }
+.stat-icon.gold    { background:rgba(212,175,55,.12); color:var(--gold-dark); }
+.stat-icon.emerald { background:rgba(16,185,129,.1); color:var(--emerald-dark); }
+.stat-icon svg { width:18px; height:18px; }
+.stat-value { font-size:1.7rem; font-weight:800; color:var(--navy); line-height:1; }
+.stat-label { font-size:.7rem; color:var(--text-muted); font-weight:500; margin-top:.3rem; text-transform:uppercase; letter-spacing:.04em; }
+
+/* ── FORM ELEMENTS ── */
+.form-group { margin-bottom:1rem; }
+.form-label { display:block; font-size:.76rem; font-weight:600; color:var(--text-secondary); margin-bottom:.35rem; text-transform:uppercase; letter-spacing:.04em; }
+.form-control { width:100%; padding:.62rem .9rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:.88rem; color:var(--text-primary); background:white; transition:var(--transition); outline:none; }
+.form-control:focus { border-color:var(--royal); box-shadow:0 0 0 3px rgba(30,58,138,.1); }
+select.form-control { cursor:pointer; }
+textarea.form-control { resize:vertical; min-height:80px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+@media (max-width:500px) { .form-row { grid-template-columns:1fr; } }
+
+/* ── BUTTONS ── */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:.4rem; padding:.6rem 1.2rem; border-radius:var(--radius-sm); font-size:.85rem; font-weight:600; cursor:pointer; transition:var(--transition); border:1.5px solid transparent; line-height:1; white-space:nowrap; text-decoration:none; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn-primary { background:linear-gradient(135deg,var(--royal),#2851c5); color:white; box-shadow:0 2px 8px rgba(30,58,138,.25); }
+.btn-primary:hover:not(:disabled) { box-shadow:0 4px 14px rgba(30,58,138,.35); filter:brightness(1.06); }
+.btn-gold { background:linear-gradient(135deg,var(--gold),var(--gold-dark)); color:var(--navy); font-weight:700; box-shadow:0 2px 8px rgba(212,175,55,.3); }
+.btn-gold:hover:not(:disabled) { box-shadow:0 4px 14px rgba(212,175,55,.4); filter:brightness(1.05); }
+.btn-success { background:linear-gradient(135deg,var(--emerald),var(--emerald-dark)); color:white; }
+.btn-success:hover:not(:disabled) { filter:brightness(1.08); }
+.btn-danger  { background:linear-gradient(135deg,var(--danger),#c53030); color:white; }
+.btn-danger:hover:not(:disabled)  { filter:brightness(1.08); }
+.btn-warning { background:linear-gradient(135deg,var(--warning),#d97706); color:white; }
+.btn-ghost   { background:none; color:var(--text-secondary); border-color:var(--border); }
+.btn-ghost:hover:not(:disabled)   { background:var(--off-white); color:var(--navy); }
+.btn-navy    { background:linear-gradient(135deg,var(--navy),var(--slate)); color:white; }
+.btn-sm  { padding:.38rem .8rem; font-size:.78rem; }
+.btn-lg  { padding:.85rem 1.6rem; font-size:.95rem; }
+.btn-full{ width:100%; }
+.btn.loading { pointer-events:none; opacity:.75; }
+.btn.loading::before { content:''; width:13px; height:13px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
+
+/* ── BADGES ── */
+.badge { display:inline-flex; align-items:center; padding:.18rem .55rem; border-radius:20px; font-size:.7rem; font-weight:700; letter-spacing:.02em; }
+.badge-success { background:rgba(16,185,129,.1); color:var(--emerald-dark); border:1px solid rgba(16,185,129,.2); }
+.badge-danger  { background:#fef2f2; color:var(--danger); border:1px solid #fecaca; }
+.badge-navy    { background:rgba(15,23,42,.08); color:var(--navy); border:1px solid rgba(15,23,42,.15); }
+.badge-gold    { background:rgba(212,175,55,.12); color:var(--gold-dark); border:1px solid rgba(212,175,55,.25); }
+.badge-info    { background:rgba(59,130,246,.08); color:#1d4ed8; border:1px solid rgba(59,130,246,.2); }
+
+/* ── ALERTS ── */
+.alert { display:flex; align-items:flex-start; gap:.6rem; padding:.75rem 1rem; border-radius:var(--radius-sm); font-size:.85rem; font-weight:500; animation:cardIn .2s ease; }
+.alert svg { flex-shrink:0; margin-top:.05rem; }
+.alert-error   { background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; }
+.alert-success { background:#f0fdf4; border:1px solid #bbf7d0; color:#15803d; }
+.alert-warning { background:#fffbeb; border:1px solid #fde68a; color:#92400e; }
+.alert-info    { background:#eff6ff; border:1px solid #bfdbfe; color:#1d4ed8; }
+.hidden { display:none !important; }
+
+/* ── TABLES ── */
+.table-wrapper { overflow-x:auto; border-radius:var(--radius-md); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; }
+thead tr { background:var(--navy); }
+th { padding:.7rem 1rem; text-align:left; font-size:.7rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.07em; white-space:nowrap; }
+td { padding:.72rem 1rem; font-size:.84rem; border-bottom:1px solid var(--border); color:var(--text-secondary); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tbody tr:hover { background:var(--off-white); }
+
+/* ── MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.6); z-index:500; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .25s; }
+.modal-overlay.open { opacity:1; pointer-events:auto; }
+.modal { background:white; border-radius:var(--radius-lg); width:100%; max-width:540px; max-height:90vh; overflow-y:auto; box-shadow:var(--shadow-lg); transform:translateY(16px); transition:transform .25s; border-top:3px solid var(--gold); }
+.modal-overlay.open .modal { transform:none; }
+.modal-header { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.4rem; border-bottom:1px solid var(--border); }
+.modal-title { font-size:1rem; font-weight:700; color:var(--navy); }
+.modal-close { width:28px; height:28px; border-radius:6px; background:none; border:1px solid var(--border); cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text-muted); }
+.modal-close:hover { background:var(--off-white); }
+.modal-body { padding:1.4rem; }
+.modal-footer { padding:.9rem 1.4rem; border-top:1px solid var(--border); display:flex; gap:.65rem; justify-content:flex-end; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar-track { background:var(--border); border-radius:20px; overflow:hidden; }
+.progress-bar-fill  { height:100%; border-radius:20px; transition:width .6s cubic-bezier(.4,0,.2,1); }
+
+/* ── EMPTY STATE ── */
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:3rem 2rem; color:var(--text-muted); text-align:center; }
+.empty-state svg { width:48px; height:48px; margin-bottom:1rem; opacity:.35; }
+.empty-state h3 { font-size:.95rem; font-weight:700; color:var(--text-secondary); margin-bottom:.4rem; }
+.empty-state p { font-size:.82rem; }
+
+/* ── ACCORDION ── */
+.accordion-item { border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:.5rem; overflow:hidden; }
+.accordion-header { display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.1rem; cursor:pointer; background:white; user-select:none; gap:1rem; font-size:.85rem; font-weight:500; }
+.accordion-header:hover { background:var(--off-white); }
+.accordion-body { display:none; padding:1rem 1.1rem; border-top:1px solid var(--border); background:var(--off-white); font-size:.85rem; }
+.accordion-item.open .accordion-body { display:block; }
+.accordion-chevron { flex-shrink:0; transition:transform .2s; }
+.accordion-item.open .accordion-chevron { transform:rotate(180deg); }
+
+/* ── Q-TABS ── */
+.q-tabs { display:flex; gap:.4rem; margin-bottom:1rem; flex-wrap:wrap; }
+.q-tab { padding:.45rem 1rem; border-radius:20px; font-size:.8rem; font-weight:600; cursor:pointer; border:1.5px solid var(--border); background:white; color:var(--text-muted); transition:var(--transition); }
+.q-tab.active { background:var(--navy); color:var(--gold); border-color:var(--navy); }
+.q-tab:hover:not(.active) { border-color:var(--royal); color:var(--royal); }
+
+/* ── SEARCH ── */
+.search-wrap { position:relative; }
+.search-wrap svg { position:absolute; left:.7rem; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none; }
+.search-input { width:100%; padding:.55rem .9rem .55rem 2.2rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:.85rem; outline:none; transition:var(--transition); background:white; }
+.search-input:focus { border-color:var(--royal); box-shadow:0 0 0 3px rgba(30,58,138,.1); }
+
+/* ════════════════════════════════════════════════════════════
+   LOGIN PAGE
+════════════════════════════════════════════════════════════ */
+#login-page { display:flex; min-height:100vh; background:linear-gradient(135deg,var(--navy) 0%,#1a2744 50%,var(--navy) 100%); align-items:center; justify-content:center; padding:2rem; }
+.login-card { background:white; border-radius:20px; padding:2.75rem 2.5rem; width:100%; max-width:420px; box-shadow:0 24px 60px rgba(0,0,0,.4); position:relative; }
+.login-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--navy),var(--royal),var(--gold)); border-radius:20px 20px 0 0; }
+.login-logo { text-align:center; margin-bottom:2rem; }
+.login-logo-icon { width:68px; height:68px; background:linear-gradient(135deg,var(--navy),var(--royal)); border-radius:16px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:.9rem; box-shadow:0 8px 24px rgba(15,23,42,.3); }
+.login-logo-icon svg { width:36px; height:36px; fill:var(--gold); }
+.login-logo h1 { font-size:1.4rem; font-weight:800; color:var(--navy); }
+.login-logo p { font-size:.8rem; color:var(--text-muted); margin-top:.2rem; }
+.input-group { position:relative; }
+.input-group .form-control { padding-right:2.8rem; }
+.input-icon-btn { position:absolute; right:.7rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted); padding:.25rem; }
+.input-icon-btn:hover { color:var(--royal); }
+
+/* ════════════════════════════════════════════════════════════
+   TEST / EXAM UI
+════════════════════════════════════════════════════════════ */
+#test-page { background:var(--off-white); min-height:100vh; display:none; flex-direction:column; }
+#test-page.active { display:flex; }
+.test-topbar { background:var(--navy); padding:.85rem 1.4rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(0,0,0,.3); }
+.test-topbar-left { display:flex; flex-direction:column; }
+.test-course-title { font-size:.85rem; font-weight:700; color:var(--gold); }
+.test-student-label { font-size:.72rem; color:rgba(255,255,255,.6); }
+.test-topbar-right { display:flex; align-items:center; gap:1rem; }
+.timer-display { font-size:1.25rem; font-weight:800; color:var(--gold); letter-spacing:.04em; font-family:monospace; padding:.3rem .75rem; border-radius:var(--radius-sm); background:rgba(212,175,55,.12); border:1.5px solid rgba(212,175,55,.25); transition:var(--transition); }
+.timer-display.warning { color:var(--warning); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3); }
+.timer-display.danger  { color:var(--danger);  background:rgba(239,68,68,.12);  border-color:rgba(239,68,68,.3); animation:timerPulse 1s infinite; }
+@keyframes timerPulse { 0%,100%{opacity:1;} 50%{opacity:.6;} }
+.test-progress-bar { height:4px; background:rgba(255,255,255,.1); }
+.test-progress-fill { height:100%; background:linear-gradient(90deg,var(--royal),var(--gold)); transition:width .5s ease; }
+.test-body { display:flex; flex:1; gap:1.25rem; padding:1.4rem; max-width:1100px; margin:0 auto; width:100%; }
+@media (max-width:768px) { .test-body { flex-direction:column; padding:1rem; } }
+.test-sidebar { width:220px; flex-shrink:0; }
+@media (max-width:768px) { .test-sidebar { width:100%; } }
+.test-sidebar-card { background:white; border-radius:var(--radius-lg); padding:1rem; border:1px solid var(--border); box-shadow:var(--shadow-sm); }
+.test-sidebar-title { font-size:.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; margin-bottom:.65rem; }
+.question-nav-grid { display:flex; flex-wrap:wrap; gap:.35rem; }
+.q-nav-btn { width:32px; height:32px; border-radius:6px; font-size:.75rem; font-weight:700; border:1.5px solid var(--border); background:white; cursor:pointer; transition:var(--transition); color:var(--text-secondary); }
+.q-nav-btn:hover   { border-color:var(--royal); color:var(--royal); }
+.q-nav-btn.answered{ background:var(--emerald); border-color:var(--emerald); color:white; }
+.q-nav-btn.current { background:var(--royal); border-color:var(--royal); color:white; }
+.progress-info-row { display:flex; justify-content:space-between; align-items:center; margin-top:.75rem; font-size:.75rem; color:var(--text-muted); }
+.legend-row { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:.65rem; }
+.legend-item { display:flex; align-items:center; gap:.3rem; font-size:.7rem; color:var(--text-muted); }
+.legend-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+.test-main { flex:1; }
+.question-card { background:white; border-radius:var(--radius-lg); padding:1.5rem; border:1px solid var(--border); box-shadow:var(--shadow-sm); min-height:320px; }
+.question-meta { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1rem; }
+.question-number { font-size:.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; }
+.question-type-badge { font-size:.7rem; font-weight:600; padding:.2rem .6rem; border-radius:20px; background:rgba(30,58,138,.08); color:var(--royal); border:1px solid rgba(30,58,138,.15); }
+.question-text { font-size:1rem; font-weight:500; color:var(--text-primary); line-height:1.65; margin-bottom:1.25rem; }
+.options-list { display:flex; flex-direction:column; gap:.5rem; }
+.option-item { display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem; border-radius:var(--radius-md); border:1.5px solid var(--border); cursor:pointer; transition:var(--transition); }
+.option-item:hover { border-color:var(--royal); background:rgba(30,58,138,.04); }
+.option-item.selected { border-color:var(--royal); background:rgba(30,58,138,.08); }
+.option-marker { width:30px; height:30px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; color:var(--text-muted); flex-shrink:0; transition:var(--transition); }
+.option-item.selected .option-marker { border-color:var(--royal); background:var(--royal); color:white; }
+.option-text { font-size:.9rem; color:var(--text-primary); }
+.tf-options { display:flex; gap:.75rem; }
+.tf-option { flex:1; padding:1rem; border-radius:var(--radius-md); border:1.5px solid var(--border); cursor:pointer; text-align:center; font-size:.95rem; font-weight:600; transition:var(--transition); color:var(--text-secondary); }
+.tf-option:hover   { border-color:var(--emerald); color:var(--emerald-dark); background:rgba(16,185,129,.05); }
+.tf-option.selected{ border-color:var(--emerald); background:rgba(16,185,129,.1); color:var(--emerald-dark); }
+.tf-option.false-opt:hover    { border-color:var(--danger); color:var(--danger); background:rgba(239,68,68,.05); }
+.tf-option.false-opt.selected { border-color:var(--danger); background:rgba(239,68,68,.08); color:var(--danger); }
+.descriptive-area { width:100%; padding:.85rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius-md); font-size:.9rem; color:var(--text-primary); resize:vertical; min-height:160px; outline:none; transition:var(--transition); font-family:inherit; line-height:1.6; }
+.descriptive-area:focus { border-color:var(--royal); box-shadow:0 0 0 3px rgba(30,58,138,.1); }
+.test-nav { display:flex; align-items:center; justify-content:space-between; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border); }
+@keyframes questionSlide { from { opacity:0; transform:translateX(8px); } to { opacity:1; transform:none; } }
+
+/* ════════════════════════════════════════════════════════════
+   COURSE SELECTION
+════════════════════════════════════════════════════════════ */
+#course-selection-page { display:none; min-height:100vh; background:linear-gradient(135deg,var(--navy) 0%,#1a2744 100%); }
+#course-selection-page.active { display:block; }
+.cs-header { padding:1.5rem 2rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.08); }
+.cs-logo { display:flex; align-items:center; gap:.65rem; color:white; font-weight:700; font-size:.95rem; }
+.cs-logo svg { width:28px; height:28px; fill:var(--gold); }
+.cs-body { max-width:700px; margin:0 auto; padding:2.5rem 1.5rem; }
+.cs-title { font-size:1.6rem; font-weight:800; color:white; margin-bottom:.4rem; }
+.cs-subtitle { color:rgba(255,255,255,.55); font-size:.9rem; margin-bottom:2rem; }
+.course-card { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); border-radius:var(--radius-lg); padding:1.25rem 1.4rem; margin-bottom:.75rem; display:flex; align-items:center; gap:1.1rem; cursor:pointer; transition:var(--transition); }
+.course-card:hover, .course-card.selected { background:rgba(212,175,55,.1); border-color:var(--gold); }
+.course-icon { width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--gold),var(--gold-dark)); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.course-icon svg { width:22px; height:22px; fill:var(--navy); }
+.course-info { flex:1; }
+.course-info h3 { color:white; font-weight:700; font-size:.95rem; margin-bottom:.3rem; }
+.course-info p { color:rgba(255,255,255,.5); font-size:.78rem; margin-bottom:.45rem; }
+.course-meta { display:flex; gap:.75rem; flex-wrap:wrap; }
+.course-meta span { font-size:.72rem; color:rgba(255,255,255,.55); background:rgba(255,255,255,.06); padding:.15rem .5rem; border-radius:4px; }
+
+/* ════════════════════════════════════════════════════════════
+   COMPLETION PAGE
+════════════════════════════════════════════════════════════ */
+#completion-page { display:none; min-height:100vh; background:linear-gradient(135deg,var(--navy) 0%,#1a2744 100%); align-items:center; justify-content:center; }
+#completion-page.active { display:flex; }
+.completion-card { background:white; border-radius:20px; padding:3rem 2.5rem; width:100%; max-width:500px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.4); margin:2rem; }
+.completion-icon { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--emerald),var(--emerald-dark)); display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 24px rgba(16,185,129,.35); }
+.completion-icon svg { width:36px; height:36px; stroke:white; }
+.completion-card h2 { font-size:1.35rem; font-weight:800; color:var(--navy); margin-bottom:.75rem; }
+.completion-message { font-size:.9rem; color:var(--text-secondary); line-height:1.8; margin-bottom:1.5rem; text-align:left; background:var(--off-white); border-radius:var(--radius-md); padding:1.1rem 1.25rem; border-left:4px solid var(--gold); }
+.completion-meta { font-size:.8rem; color:var(--text-muted); margin-bottom:1.5rem; }
+
+/* ════════════════════════════════════════════════════════════
+   STUDENT DASHBOARD
+════════════════════════════════════════════════════════════ */
+.student-welcome-banner { background:linear-gradient(135deg,var(--navy),var(--royal)); border-radius:var(--radius-lg); padding:1.75rem; margin-bottom:1.25rem; display:flex; align-items:center; gap:1.25rem; }
+.student-avatar-lg { width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-dark)); display:flex; align-items:center; justify-content:center; color:var(--navy); font-size:1.35rem; font-weight:800; flex-shrink:0; }
+.student-welcome-text h2 { color:white; font-size:1.1rem; font-weight:700; }
+.student-welcome-text p { color:rgba(255,255,255,.6); font-size:.82rem; }
+.info-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:.75rem; margin-bottom:1.25rem; }
+.info-item { background:white; border-radius:var(--radius-md); padding:.85rem 1rem; border:1px solid var(--border); }
+.info-item label { font-size:.68rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:.2rem; }
+.info-item span { font-size:.9rem; font-weight:600; color:var(--navy); }
+
+/* ════════════════════════════════════════════════════════════
+   COURSE TEST MANAGEMENT
+════════════════════════════════════════════════════════════ */
+.course-mgmt-grid { display:grid; grid-template-columns:280px 1fr; gap:1.25rem; }
+@media (max-width:768px) { .course-mgmt-grid { grid-template-columns:1fr; } }
+.course-mgmt-item { display:flex; align-items:center; gap:.85rem; padding:.9rem 1.1rem; border:1.5px solid var(--border); border-radius:var(--radius-md); cursor:pointer; transition:var(--transition); background:white; margin-bottom:.5rem; }
+.course-mgmt-item:hover, .course-mgmt-item.selected { border-color:var(--gold); background:rgba(212,175,55,.04); }
+.course-mgmt-icon { width:36px; height:36px; border-radius:8px; background:rgba(30,58,138,.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--royal); }
+.course-mgmt-icon svg { width:18px; height:18px; }
+.course-mgmt-name { font-weight:700; font-size:.875rem; color:var(--navy); }
+.course-mgmt-meta { font-size:.72rem; color:var(--text-muted); display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.2rem; }
+.q-count-card { background:white; border-radius:var(--radius-md); padding:.85rem; border:1px solid var(--border); text-align:center; }
+.q-count-card.gold { border-color:var(--gold); background:rgba(212,175,55,.06); }
+.q-count-val   { font-size:1.5rem; font-weight:800; color:var(--navy); }
+.q-count-label { font-size:.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; font-weight:600; }
+.duration-preset-grid { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.5rem; }
+.duration-preset { padding:.38rem .75rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:.8rem; font-weight:600; cursor:pointer; background:white; color:var(--text-secondary); transition:var(--transition); }
+.duration-preset:hover, .duration-preset.active { border-color:var(--royal); color:var(--royal); background:rgba(30,58,138,.06); }
+
+/* ════════════════════════════════════════════════════════════
+   SYNC PANEL
+════════════════════════════════════════════════════════════ */
+.sync-status-card { background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(212,175,55,.06)); border:1px solid rgba(16,185,129,.2); border-radius:var(--radius-lg); padding:1.25rem; margin-bottom:1rem; }
+.info-row { display:flex; justify-content:space-between; align-items:center; padding:.45rem 0; border-bottom:1px solid var(--border); font-size:.85rem; }
+.info-row:last-child { border-bottom:none; }
+.info-row label { color:var(--text-muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; }
+.info-row span  { color:var(--text-primary); font-weight:600; }
+
+/* ── USER TABS ── */
+.user-tab-btn.active { color:var(--royal) !important; border-bottom-color:var(--royal) !important; }
+
+/* ════════════════════════════════════════════════════════════
+   ADMIN SECTION LAYOUT
+════════════════════════════════════════════════════════════ */
+.admin-section { animation:pageFade .3s ease; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Loading Everium…</div>
+</div>
+<div id="toast-container"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     LOGIN PAGE
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="login-page" style="display:flex;min-height:100vh;background:linear-gradient(135deg,#0F172A 0%,#1a2744 100%);align-items:center;justify-content:center;padding:2rem;">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <h1>Everium Test Platform</h1>
+      <p>Excellence in Assessment · Integrated with SkillTrack Pro</p>
+    </div>
+    <div id="login-alert" class="hidden" style="margin-bottom:1rem;"></div>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" id="login-username" class="form-control" placeholder="Enter your username" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-group">
+          <input type="password" id="login-password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+          <button type="button" class="input-icon-btn" id="password-toggle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg" id="login-btn">Sign In to Everium</button>
+    </form>
+    <div style="margin-top:1.25rem;text-align:center;font-size:.75rem;color:var(--text-muted);border-top:1px solid var(--border);padding-top:.9rem;">
+      Your login credentials are provided by your administrator via SkillTrack Pro
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     STUDENT DASHBOARD
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="student-dashboard-page">
+  <div class="app-layout">
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="logo-text"><h2>Everium</h2><span>Test Platform</span></div>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">S</div>
+        <div><div class="sidebar-user-name">Student</div><div class="sidebar-user-role">Student</div></div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-label">My Exam</div>
+        <button class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost btn-full btn-sm" style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.1)" onclick="App.logout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="main-content">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <button class="hamburger" id="hamburger-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <span class="topbar-title">Student Dashboard</span>
+        </div>
+      </div>
+      <div class="content-area">
+        <div class="student-welcome-banner">
+          <div class="student-avatar-lg sidebar-user-avatar" style="width:56px;height:56px;font-size:1.35rem">S</div>
+          <div class="student-welcome-text">
+            <h2>Welcome, <span class="sidebar-user-name">Student</span></h2>
+            <p>Your assessment is ready. Please read all instructions before starting.</p>
+          </div>
+        </div>
+        <div class="info-grid" id="student-info-grid">
+          <div class="info-item"><label>Status</label><span>Loading…</span></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Exam Instructions</h3></div>
+          <div class="card-body">
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:.6rem;font-size:.875rem;color:var(--text-secondary)">
+              <li style="display:flex;gap:.65rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span> You have <strong>one attempt only</strong>. Once started, your attempt cannot be restarted without admin approval.</li>
+              <li style="display:flex;gap:.65rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span> The timer runs continuously. Refreshing, closing the browser, or switching devices will <strong>not pause the timer</strong>.</li>
+              <li style="display:flex;gap:.65rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span> Answers are <strong>saved automatically</strong> as you proceed. Look for the "✓ Saved" indicator.</li>
+              <li style="display:flex;gap:.65rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span> When the timer expires, your exam is submitted automatically with whatever answers you have provided.</li>
+              <li style="display:flex;gap:.65rem"><span style="color:var(--gold);font-weight:700;flex-shrink:0">→</span> <strong>Do not share your login credentials</strong> with anyone. Each account is personal.</li>
+            </ul>
+          </div>
+          <div class="card-footer" style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <button class="btn btn-gold btn-lg" id="student-start-btn" onclick="App.showPage('course-selection');CourseSelection.init();">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Start Assessment
+            </button>
+            <button class="btn btn-primary btn-lg hidden" id="student-resume-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Resume Test
+            </button>
+          </div>
+        </div>
+        <div class="card hidden" id="student-completed-notice" style="border-top:3px solid var(--emerald)">
+          <div class="card-body" style="text-align:center;padding:2rem">
+            <div style="width:56px;height:56px;border-radius:50%;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:.4rem">Assessment Completed</h3>
+            <p style="font-size:.85rem;color:var(--text-muted)">You have already submitted this assessment. Results are under review. Contact your instructor for feedback.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     COURSE SELECTION PAGE
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="course-selection-page">
+  <div class="cs-header">
+    <div class="cs-logo">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Everium Test Platform
+    </div>
+    <button class="btn btn-ghost btn-sm" style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.15)" onclick="App.showPage('student-dashboard');StudentDash.init()">← Back</button>
+  </div>
+  <div class="cs-body">
+    <h2 class="cs-title">Select Your Course</h2>
+    <p class="cs-subtitle">Choose the course for which you want to take the assessment.</p>
+    <div id="courses-container"></div>
+    <button class="btn btn-gold btn-lg btn-full hidden" id="start-test-btn" style="margin-top:1.25rem" onclick="CourseSelection.startTest()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Start Test
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     TEST / EXAM PAGE
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="test-page">
+  <div class="test-topbar">
+    <div class="test-topbar-left">
+      <div class="test-course-title" id="test-course-name">Assessment</div>
+      <div class="test-student-label">Student: <span id="test-student-name">—</span></div>
+    </div>
+    <div class="test-topbar-right">
+      <div style="font-size:.75rem;color:rgba(255,255,255,.5)" id="progress-pct">0%</div>
+      <div class="timer-display" id="timer-display">00:00</div>
+    </div>
+  </div>
+  <div class="test-progress-bar"><div class="test-progress-fill" id="progress-fill" style="width:0%"></div></div>
+
+  <div class="test-body">
+    <div class="test-sidebar">
+      <div class="test-sidebar-card">
+        <div class="test-sidebar-title">Questions</div>
+        <div class="question-nav-grid" id="question-nav-grid"></div>
+        <div class="progress-info-row">
+          <span id="progress-info">0 answered</span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--royal)"></div>Current</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--emerald)"></div>Answered</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Pending</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-main">
+      <div class="question-card" id="question-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     COMPLETION PAGE
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="completion-page">
+  <div class="completion-card">
+    <div class="completion-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Assessment Submitted</h2>
+    <div class="completion-message">
+      Thank you for attempting the assessment.<br><br>
+      Your responses have been successfully submitted and recorded.<br><br>
+      Your test session is now complete.<br><br>
+      Please contact your instructor or administrator if you have any questions.<br><br>
+      You may now log out safely.
+    </div>
+    <div class="completion-meta">
+      <strong id="completion-course-name">—</strong><br>
+      Submitted on <span id="completion-time">—</span>
+    </div>
+    <button class="btn btn-navy btn-full" onclick="App.logout()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/></svg>
+      Log Out
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     TEACHER DASHBOARD
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="teacher-dashboard-page">
+  <div class="app-layout">
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="logo-text"><h2>Everium</h2><span>Test Platform</span></div>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">T</div>
+        <div><div class="sidebar-user-name">Teacher</div><div class="sidebar-user-role">Teacher</div></div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-label">Reports</div>
+        <button class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2z"/></svg>Results</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost btn-full btn-sm" style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.1)" onclick="App.logout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/></svg>Sign Out
+        </button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="main-content">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <button class="hamburger" id="hamburger-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <span class="topbar-title">Teacher Dashboard</span>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="TeacherDash.exportResults()">Export CSV</button>
+      </div>
+      <div class="content-area">
+        <div class="stats-grid">
+          <div class="stat-card emerald"><div class="stat-icon emerald"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-value" id="t-stat-completed">—</div><div class="stat-label">Completed</div></div>
+          <div class="stat-card gold"><div class="stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-value" id="t-stat-active">—</div><div class="stat-label">In Progress</div></div>
+          <div class="stat-card navy"><div class="stat-icon navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-value" id="t-stat-students">—</div><div class="stat-label">Total Students</div></div>
+          <div class="stat-card royal"><div class="stat-icon royal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16"/></svg></div><div class="stat-value" id="t-stat-avg">—</div><div class="stat-label">Avg Score</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Student Submissions</h3></div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Student</th><th>Course</th><th>MCQ Score</th><th>T/F Score</th><th>Total</th><th>Submitted</th><th>Actions</th></tr></thead>
+              <tbody id="results-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     ADMIN DASHBOARD
+════════════════════════════════════════════════════════════ -->
+<div class="page" id="admin-dashboard-page">
+  <div class="app-layout">
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <div class="logo-text"><h2>Everium</h2><span>Admin Panel</span></div>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">A</div>
+        <div><div class="sidebar-user-name">Administrator</div><div class="sidebar-user-role">Admin</div></div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-label">Overview</div>
+        <button class="nav-link active" data-admin-view="overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <div class="nav-label">Management</div>
+        <button class="nav-link" data-admin-view="users">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Users (Read-only)
+        </button>
+        <button class="nav-link" data-admin-view="course-mgmt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13M12 6.253C10.832 5.477 9.246 5 7.5 5"/></svg>
+          Course Test Mgmt
+        </button>
+        <button class="nav-link" data-admin-view="questions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907M12 17h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Question Banks
+        </button>
+        <div class="nav-label">Analytics</div>
+        <button class="nav-link" data-admin-view="results">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16"/></svg>
+          Results
+        </button>
+        <button class="nav-link" data-admin-view="analytics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+          Analytics
+        </button>
+        <div class="nav-label" style="color:var(--gold);opacity:.7">SkillTrack Integration</div>
+        <button class="nav-link" data-admin-view="sync">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+          SkillTrack Sync
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost btn-full btn-sm" style="color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.1)" onclick="App.logout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/></svg>Sign Out
+        </button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="main-content">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <button class="hamburger" id="hamburger-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+          <span class="topbar-title" id="admin-topbar-title">Dashboard Overview</span>
+        </div>
+      </div>
+      <div class="content-area">
+
+        <!-- OVERVIEW -->
+        <div id="admin-overview" class="admin-section">
+          <div class="stats-grid">
+            <div class="stat-card navy"><div class="stat-icon navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-value" id="a-stat-students" data-val="0">0</div><div class="stat-label">Total Students</div></div>
+            <div class="stat-card royal"><div class="stat-icon royal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/></svg></div><div class="stat-value" id="a-stat-teachers" data-val="0">0</div><div class="stat-label">Teachers</div></div>
+            <div class="stat-card emerald"><div class="stat-icon emerald"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-value" id="a-stat-completed" data-val="0">0</div><div class="stat-label">Completed</div></div>
+            <div class="stat-card gold"><div class="stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-value" id="a-stat-active" data-val="0">0</div><div class="stat-label">In Progress</div></div>
+            <div class="stat-card navy"><div class="stat-icon navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/></svg></div><div class="stat-value" id="a-stat-avg" data-val="0">0</div><div class="stat-label">Avg Score</div></div>
+          </div>
+          <div class="card" style="border-top:3px solid var(--gold)">
+            <div class="card-header"><h3 class="card-title">Integration Status</h3></div>
+            <div class="card-body">
+              <p style="font-size:.875rem;color:var(--text-secondary);line-height:1.7">
+                All students, teachers, and courses are managed in <strong>SkillTrack Pro</strong> and automatically synced here.
+                Users listed in Everium are <strong>read-only</strong> — add or remove people in SkillTrack Pro, then sync.
+              </p>
+              <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+                <button class="btn btn-gold" onclick="AdminDash.switchView('sync')">View Sync Status</button>
+                <button class="btn btn-ghost" onclick="AdminDash.switchView('course-mgmt')">Manage Tests</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USERS (READ-ONLY) -->
+        <div id="admin-users" class="admin-section hidden">
+          <div class="card" style="border-top:3px solid var(--info)">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">User Overview</h3>
+                <p style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem">Synced from SkillTrack Pro. Enable/disable users or reset exam attempts here.</p>
+              </div>
+            </div>
+            <div style="padding:0 1.4rem">
+              <div style="display:flex;gap:.25rem;border-bottom:2px solid var(--border);margin-bottom:1rem;">
+                <button class="user-tab-btn active" data-user-tab="students" onclick="AdminDash.switchUserTab('students',this)" style="padding:.55rem 1.1rem;font-size:.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s">Students</button>
+                <button class="user-tab-btn" data-user-tab="teachers" onclick="AdminDash.switchUserTab('teachers',this)" style="padding:.55rem 1.1rem;font-size:.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s">Teachers</button>
+              </div>
+            </div>
+            <div class="table-wrapper" style="margin:0 0 .1rem">
+              <table>
+                <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="users-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- COURSE TEST MANAGEMENT -->
+        <div id="admin-course-mgmt" class="admin-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Course Test Management</h3>
+                <p style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem">Select a course to configure its exam settings and manage its question bank.</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="course-mgmt-grid">
+                <div>
+                  <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem">Available Courses</div>
+                  <div id="course-mgmt-list"><div style="padding:1rem;text-align:center;color:var(--text-muted);font-size:.85rem">Loading…</div></div>
+                </div>
+                <div id="course-test-dashboard" class="hidden">
+                  <div style="font-size:.82rem;font-weight:800;color:var(--navy);margin-bottom:.85rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Test Configuration</div>
+
+                  <div class="card" style="margin-bottom:0">
+                    <div class="card-header" style="padding:.85rem 1.1rem">
+                      <h3 class="card-title" id="ctd-course-name" style="font-size:.95rem">—</h3>
+                    </div>
+                    <div class="card-body" style="padding:1.1rem">
+                      <div class="form-group">
+                        <label class="form-label">Test Name</label>
+                        <input type="text" id="ctd-test-name" class="form-control" placeholder="e.g. Final Assessment">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Exam Duration</label>
+                        <div class="duration-preset-grid">
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(15,this)">15 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(20,this)">20 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(30,this)">30 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(45,this)">45 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(60,this)">60 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(90,this)">90 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setDuration(120,this)">120 min</button>
+                          <button class="duration-preset" onclick="CourseMgr.setCustomDuration(this)">Custom</button>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.5rem">
+                          <input type="number" id="ctd-custom-duration" class="form-control hidden" placeholder="e.g. 75" min="1" max="360" style="max-width:120px">
+                          <span id="ctd-duration-label" style="font-size:.82rem;color:var(--text-muted)">Duration: — minutes</span>
+                        </div>
+                        <input type="hidden" id="ctd-duration">
+                      </div>
+                      <div class="form-group" style="display:flex;align-items:center;gap:.65rem">
+                        <input type="checkbox" id="ctd-active" checked style="width:16px;height:16px;cursor:pointer">
+                        <label for="ctd-active" class="form-label" style="margin:0;cursor:pointer;text-transform:none;font-size:.85rem">Exam is active and visible to students</label>
+                      </div>
+                      <div style="display:flex;gap:.65rem;margin-top:.25rem">
+                        <button class="btn btn-primary" id="ctd-save-btn" onclick="CourseMgr.saveTestConfig()">Save Configuration</button>
+                        <button class="btn btn-gold" onclick="CourseMgr.manageQuestions()">Manage Questions →</button>
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem">Question Bank Summary</div>
+                      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem" id="ctd-q-summary">
+                        <div class="q-count-card"><div class="q-count-val">—</div><div class="q-count-label">MCQ</div></div>
+                        <div class="q-count-card"><div class="q-count-val">—</div><div class="q-count-label">T/F</div></div>
+                        <div class="q-count-card"><div class="q-count-val">—</div><div class="q-count-label">Desc</div></div>
+                        <div class="q-count-card gold"><div class="q-count-val">—</div><div class="q-count-label">Total</div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUESTION BANK -->
+        <div id="admin-questions" class="admin-section hidden">
+          <div class="card">
+            <div class="card-header" id="qbank-header">
+              <h3 class="card-title">Question Bank</h3>
+              <button class="btn btn-primary btn-sm" onclick="QuestionMgr.openCreate()">+ Add Question</button>
+            </div>
+            <div class="card-body">
+              <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center">
+                <div style="display:flex;gap:.35rem">
+                  <div style="text-align:center;min-width:54px;padding:.5rem .75rem;border-radius:var(--radius-md);background:rgba(30,58,138,.08);border:1px solid rgba(30,58,138,.15)"><div style="font-size:1rem;font-weight:800;color:var(--royal)" id="mcq-count">0</div><div style="font-size:.63rem;color:var(--text-muted);font-weight:600">MCQ</div></div>
+                  <div style="text-align:center;min-width:54px;padding:.5rem .75rem;border-radius:var(--radius-md);background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2)"><div style="font-size:1rem;font-weight:800;color:var(--gold-dark)" id="tf-count">0</div><div style="font-size:.63rem;color:var(--text-muted);font-weight:600">T/F</div></div>
+                  <div style="text-align:center;min-width:54px;padding:.5rem .75rem;border-radius:var(--radius-md);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)"><div style="font-size:1rem;font-weight:800;color:var(--emerald-dark)" id="desc-count">0</div><div style="font-size:.63rem;color:var(--text-muted);font-weight:600">Desc</div></div>
+                  <div style="text-align:center;min-width:54px;padding:.5rem .75rem;border-radius:var(--radius-md);background:rgba(15,23,42,.06);border:1px solid var(--border)"><div style="font-size:1rem;font-weight:800;color:var(--navy)" id="total-q-count">0</div><div style="font-size:.63rem;color:var(--text-muted);font-weight:600">Total</div></div>
+                </div>
+              </div>
+              <div class="q-tabs">
+                <button class="q-tab active" data-qtype="mcq"         onclick="QuestionMgr.switchType('mcq',this)">Multiple Choice</button>
+                <button class="q-tab"        data-qtype="tf"          onclick="QuestionMgr.switchType('tf',this)">True / False</button>
+                <button class="q-tab"        data-qtype="descriptive" onclick="QuestionMgr.switchType('descriptive',this)">Descriptive</button>
+              </div>
+              <div id="questions-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="admin-results" class="admin-section hidden">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Results & Reports</h3>
+              <button class="btn btn-gold btn-sm" onclick="AdminDash.exportResults()">Export CSV</button>
+            </div>
+            <div class="stats-grid" style="padding:1rem 1.4rem 0">
+              <div class="stat-card emerald"><div class="stat-icon emerald"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-value" id="ar-stat-completed">—</div><div class="stat-label">Completed</div></div>
+              <div class="stat-card gold"><div class="stat-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-value" id="ar-stat-active">—</div><div class="stat-label">In Progress</div></div>
+              <div class="stat-card navy"><div class="stat-icon navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5"/></svg></div><div class="stat-value" id="ar-stat-students">—</div><div class="stat-label">Total Students</div></div>
+              <div class="stat-card royal"><div class="stat-icon royal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/></svg></div><div class="stat-value" id="ar-stat-avg">—</div><div class="stat-label">Avg Score</div></div>
+            </div>
+            <div class="table-wrapper" style="margin:1rem 0 0">
+              <table>
+                <thead><tr><th>Student</th><th>Course</th><th>MCQ</th><th>T/F</th><th>Total</th><th>Submitted</th><th>Responses</th></tr></thead>
+                <tbody id="ar-results-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted)">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div id="admin-analytics" class="admin-section hidden">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Analytics</h3></div>
+            <div class="card-body" id="analytics-bars">
+              <div style="text-align:center;color:var(--text-muted);padding:2rem">Loading analytics…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKILLTRACK SYNC -->
+        <div id="admin-sync" class="admin-section hidden">
+          <div class="card" style="border-top:3px solid var(--gold)">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">SkillTrack Pro Integration</h3>
+                <p style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem">Pull latest students, teachers, and courses from SkillTrack Pro into Everium.</p>
+              </div>
+              <button class="btn btn-gold" onclick="AdminDash.runSync()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                Sync Now
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="sync-status-card">
+                <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Sync Status</div>
+                <div id="sync-status-info">
+                  <div class="info-row"><label>Last Sync</label><span>Loading…</span></div>
+                </div>
+              </div>
+              <div class="alert alert-info" style="font-size:.82rem">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+                <div>
+                  <strong>How it works:</strong> When you click Sync Now, Everium calls SkillTrack Pro's API to pull all active users and courses. Credentials generated in SkillTrack Pro are used as login passwords here. Users added or removed in SkillTrack Pro will be reflected after the next sync.
+                  <br><br>
+                  Set up an automatic 30-minute sync trigger by running <code>setupScheduledSync()</code> in your Everium Apps Script editor.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════════════════════ -->
+
+<!-- Submit Confirm -->
+<div class="modal-overlay" id="submit-confirm-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h3 class="modal-title">Submit Exam</h3>
+      <button class="modal-close" onclick="Modal.close('submit-confirm-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p id="submit-confirm-msg" style="color:var(--text-secondary);font-size:.9rem;line-height:1.6"></p>
+      <div class="alert alert-warning" style="margin-top:.75rem;font-size:.82rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        This action cannot be undone. Your exam will be permanently submitted.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="Modal.close('submit-confirm-modal')">Cancel</button>
+      <button class="btn btn-success" onclick="ExamPage.submit(false)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Yes, Submit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Student Detail / Descriptive Answers -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header">
+      <div>
+        <h3 class="modal-title">Descriptive Answers</h3>
+        <p style="font-size:.75rem;color:var(--text-muted);margin-top:.2rem">Student: <strong id="detail-student-name">—</strong></p>
+      </div>
+      <button class="modal-close" onclick="Modal.close('detail-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="descriptive-answers-body"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="Modal.close('detail-modal')">Close</button></div>
+  </div>
+</div>
+
+<!-- Question Modal -->
+<div class="modal-overlay" id="question-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h3 class="modal-title" id="q-modal-title">Add Question</h3>
+      <button class="modal-close" onclick="Modal.close('question-modal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div id="q-form-alert" class="hidden" style="margin-bottom:.75rem"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Question Type *</label>
+          <select id="qf-type" class="form-control" onchange="QuestionMgr.onTypeChange()">
+            <option value="mcq">Multiple Choice (MCQ)</option>
+            <option value="tf">True / False</option>
+            <option value="descriptive">Descriptive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Course *</label>
+          <select id="qf-course" class="form-control"></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Order / Position</label>
+          <input type="number" id="qf-order" class="form-control" min="1" value="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Marks</label>
+          <input type="number" id="qf-marks" class="form-control" min="1" value="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Question Text *</label>
+        <textarea id="qf-text" class="form-control" rows="3" placeholder="Enter the question…"></textarea>
+      </div>
+      <div id="mcq-fields">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Option A *</label><input type="text" id="qf-optA" class="form-control" placeholder="Option A"></div>
+          <div class="form-group"><label class="form-label">Option B *</label><input type="text" id="qf-optB" class="form-control" placeholder="Option B"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Option C *</label><input type="text" id="qf-optC" class="form-control" placeholder="Option C"></div>
+          <div class="form-group"><label class="form-label">Option D *</label><input type="text" id="qf-optD" class="form-control" placeholder="Option D"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correct Answer</label>
+          <select id="qf-correct" class="form-control">
+            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+          </select>
+        </div>
+      </div>
+      <div id="tf-fields" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Correct Answer</label>
+          <select id="qf-tf-correct" class="form-control">
+            <option value="True">True</option><option value="False">False</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="Modal.close('question-modal')">Cancel</button>
+      <button class="btn btn-primary" id="q-form-submit" onclick="QuestionMgr.saveQuestion()">Save Question</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/exam.js"></script>
+<script src="js/questions.js"></script>
+<script>
+// ── Extra helpers bridging UI ──────────────────────────────────
+TeacherDash.exportResults = async function() {
+  const res = await API.getResults();
+  if (res.success) {
+    exportCSV(res.data.map(r => ({
+      Student: r.studentName, Username: r.username, Course: r.courseName,
+      MCQ: r.mcqScore, TF: r.tfScore, Total: r.score,
+      Submitted: r.endTime ? new Date(r.endTime).toLocaleString('en-IN') : '',
+    })), 'Everium_Results_' + new Date().toISOString().split('T')[0] + '.csv');
+  }
+};
+AdminDash.exportResults = TeacherDash.exportResults;
+
+// CourseMgr duration helpers
+CourseMgr._selectedDuration = null;
+CourseMgr.setDuration = function(val, btn) {
+  this._selectedDuration = val;
+  document.querySelectorAll('.duration-preset').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('ctd-custom-duration')?.classList.add('hidden');
+  document.getElementById('ctd-duration-label').textContent = 'Duration: ' + val + ' minutes';
+  document.getElementById('ctd-duration').value = val;
+};
+CourseMgr.setCustomDuration = function(btn) {
+  document.querySelectorAll('.duration-preset').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const customEl = document.getElementById('ctd-custom-duration');
+  if (customEl) { customEl.classList.remove('hidden'); customEl.focus(); }
+  document.getElementById('ctd-custom-duration').oninput = function() {
+    const v = parseInt(this.value) || 0;
+    document.getElementById('ctd-duration-label').textContent = v > 0 ? 'Duration: ' + v + ' minutes' : 'Enter duration in minutes';
+    document.getElementById('ctd-duration').value = v;
+  };
+};
+
+// Patch CourseMgr.renderTestDashboard to also set duration UI
+const _origRender = CourseMgr.renderTestDashboard.bind(CourseMgr);
+CourseMgr.renderTestDashboard = function() {
+  _origRender();
+  const cfg = this.testConfig || {};
+  const dur = Number(cfg.duration || (this.selectedCourse ? this.selectedCourse.duration : 45) || 45);
+  const presets = [15,20,30,45,60,90,120];
+  if (presets.includes(dur)) {
+    document.querySelectorAll('.duration-preset').forEach(b => { b.classList.remove('active'); if (parseInt(b.textContent) === dur) b.classList.add('active'); });
+    document.getElementById('ctd-duration-label').textContent = 'Duration: ' + dur + ' minutes';
+    document.getElementById('ctd-duration').value = dur;
+  } else {
+    const customEl = document.getElementById('ctd-custom-duration');
+    if (customEl) { customEl.classList.remove('hidden'); customEl.value = dur; }
+    document.getElementById('ctd-duration-label').textContent = 'Duration: ' + dur + ' minutes';
+    document.getElementById('ctd-duration').value = dur;
+  }
+};
+
+// Patch CourseMgr.saveTestConfig to read from hidden field
+const _origSave = CourseMgr.saveTestConfig.bind(CourseMgr);
+CourseMgr.saveTestConfig = async function() {
+  if (!this.selectedCourse) return;
+  const testName = document.getElementById('ctd-test-name')?.value.trim();
+  const durVal   = parseInt(document.getElementById('ctd-duration')?.value) || 45;
+  const active   = document.getElementById('ctd-active')?.checked !== false;
+  if (!durVal || durVal < 1) { Toast.error('Duration must be at least 1 minute.'); return; }
+  const config = { courseId:this.selectedCourse.id, testName:testName||this.selectedCourse.name+' Assessment', duration:durVal, active, randomize:false, showTimer:true, autoSubmit:true, updatedAt:new Date().toISOString() };
+  const btn = document.getElementById('ctd-save-btn');
+  if (btn) btn.classList.add('loading');
+  try {
+    const res = await API.saveTestConfig(config);
+    if (res.success) { this.testConfig = config; Toast.success('Test configuration saved! Duration: '+durVal+' minutes.'); }
+    else Toast.error(res.message || 'Failed to save.');
+  } catch(e) { Toast.error('Connection error.'); }
+  finally { if (btn) btn.classList.remove('loading'); }
+};
+
+// Kick off the app
+document.addEventListener('DOMContentLoaded', () => {
+  App.init();
+  LoginPage.init();
+});
+</script>
+</body>
+</html>
