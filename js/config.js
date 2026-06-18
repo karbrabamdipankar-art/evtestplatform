@@ -12,7 +12,7 @@ const CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycbwKUSLLip4iZqgf4i9mtHvguv4gcaCtewtV7Y5jsuzIs5J2HxS0_N7JOHM7itTlANIk-A/exec',
 
   // ── Your SkillTrack Pro Apps Script Web App URL ──
-  SKILLTRACK_API_URL: 'https://script.google.com/macros/s/AKfycbzQbzwdohMAhMviHSAYqjvK7cDOMRQfsOKX_o3S0bU-JZgRJBdEYqUuU9LgKH7ZdY6bEQ/exec',
+  SKILLTRACK_API_URL: 'https://script.google.com/macros/s/AKfycbwdJsGxnvU-T69v2WHecctvcIk4fdUSZn6IqWLXg6GIbq3RF5HcuEZvuStDK7xorAWMug/exec',
 
   // Platform Settings
   PLATFORM_NAME:    'Everium Test Platform',
